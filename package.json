@@ -1,0 +1,12 @@
+{
+  "name": "sahodawa-karmachari-association",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Static trilingual association website and browser tests",
+  "scripts": {
+    "test:e2e": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.55.1"
+  }
+}
