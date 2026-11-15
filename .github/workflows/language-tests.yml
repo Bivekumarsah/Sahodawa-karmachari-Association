@@ -1,8 +1,8 @@
-name: Test website language switching
+name: Website quality checks
 
 on:
   push:
-    branches: [main, "feature/premium-association-refresh"]
+    branches: [main]
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -23,5 +23,5 @@ jobs:
         run: npm install --no-audit --no-fund
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
-      - name: Test all language options on desktop and mobile
+      - name: Test responsive design, translations and features
         run: npm run test:e2e
