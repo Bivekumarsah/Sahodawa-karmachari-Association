@@ -1,6 +1,6 @@
 # Sahodawa Karmachari Association
 
-Official website project for **Sahodawa Karmachari Association** (सहोदवा कर्मचारी एसोसिएसन).
+Official website project for **Sahodawa Karmachari Association** (सहोडवा कर्मचारी एसोसिएसन).
 
 A bilingual, responsive, accessible static association portal hosted with GitHub Pages.
 
