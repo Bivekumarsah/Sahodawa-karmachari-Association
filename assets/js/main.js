@@ -5,24 +5,40 @@
     {
       id: "notice-board",
       category: "general",
-      title: { ne: "आधिकारिक सूचना यहाँ प्रकाशित गरिनेछ", en: "Official announcements will appear here" },
-      description: { ne: "संस्थाबाट पुष्टि भएका सूचनाहरू प्राप्त भएपछि यस पृष्ठमा प्रकाशन गरिनेछ।", en: "Verified announcements from the association will be published in this section." }
+      title: { ne: "आधिकारिक सूचना यहाँ प्रकाशित गरिनेछ", en: "Official announcements will appear here", bj: "आधिकारिक सूचना इहाँ प्रकाशित कइल जाई" },
+      description: { ne: "संस्थाबाट पुष्टि भएका सूचनाहरू प्राप्त भएपछि यस पृष्ठमा प्रकाशन गरिनेछ।", en: "Verified announcements from the association will be published in this section.", bj: "संस्था से पुष्टि भइल सूचना मिलला के बाद एह पन्ना पर देल जाई।" }
     },
     {
       id: "membership-info",
       category: "membership",
-      title: { ne: "सदस्यता प्रक्रिया सम्बन्धी जानकारी", en: "Membership process information" },
-      description: { ne: "सदस्यताका योग्यता, शुल्क र प्रक्रिया पुष्टि हुन बाँकी छन्।", en: "Membership eligibility, fees and the application process are yet to be confirmed." }
+      title: { ne: "सदस्यता प्रक्रिया सम्बन्धी जानकारी", en: "Membership process information", bj: "सदस्यता प्रक्रिया के जानकारी" },
+      description: { ne: "सदस्यताका योग्यता, शुल्क र प्रक्रिया पुष्टि हुन बाँकी छन्।", en: "Membership eligibility, fees and the application process are yet to be confirmed.", bj: "सदस्यता के योग्यता, शुल्क आ आवेदन प्रक्रिया के पुष्टि अभी बाकी हए।" }
     },
     {
       id: "meeting-info",
       category: "meeting",
-      title: { ne: "बैठक तथा कार्यक्रम जानकारी", en: "Meeting and event information" },
-      description: { ne: "आधिकारिक बैठक तथा कार्यक्रमका विवरण उपलब्ध भएपछि अद्यावधिक गरिनेछ।", en: "Meeting and event details will be added when official information is available." }
+      title: { ne: "बैठक तथा कार्यक्रम जानकारी", en: "Meeting and event information", bj: "बैठक आ कार्यक्रम के जानकारी" },
+      description: { ne: "आधिकारिक बैठक तथा कार्यक्रमका विवरण उपलब्ध भएपछि अद्यावधिक गरिनेछ।", en: "Meeting and event details will be added when official information is available.", bj: "आधिकारिक बैठक आ कार्यक्रम के जानकारी मिलला पर इहाँ जोडल जाई।" }
     }
   ];
 
   const labels = {
+    bj: {
+      example: "नमूना — आधिकारिक नइखे",
+      general: "सामान्य",
+      membership: "सदस्यता",
+      meeting: "बैठक",
+      noResults: "मिलत-जुलत सूचना ना मिलल। दोसर शब्द से खोजीं।",
+      draftSaved: "आवेदन के मसौदा रउआ के उपकरण में डाउनलोड हो गेल हए। ई संस्था में जमा नइखे भइल।",
+      menuOpen: "मेनु खोलीं",
+      menuClose: "मेनु बन्द करीं",
+      application: "सहोडवा कर्मचारी एसोसिएसन\nसदस्यता खातिर रुचि आवेदन — मसौदा मात्र\n\n",
+      name: "नाम",
+      phone: "सम्पर्क नम्बर",
+      area: "कार्यालय / इलाका",
+      email: "इमेल",
+      notice: "\nई निजी मसौदा मात्र हए। कौनो संस्था में अपने-आप जमा नइखे भइल।"
+    },
     ne: {
       example: "नमूना — आधिकारिक होइन",
       general: "साधारण",
@@ -59,11 +75,11 @@
 
   const translatable = Array.from(document.querySelectorAll("[data-en]"));
   for (const element of translatable) {
-    element.dataset.ne = element.textContent;
+    if (!element.dataset.ne) element.dataset.ne = element.textContent;
   }
   const placeholderInputs = Array.from(document.querySelectorAll("[data-placeholder-en]"));
   for (const input of placeholderInputs) {
-    input.dataset.placeholderNe = input.placeholder;
+    if (!input.dataset.placeholderNe) input.dataset.placeholderNe = input.placeholder;
   }
 
   const filterButtons = Array.from(document.querySelectorAll("[data-filter]"));
@@ -73,14 +89,16 @@
   const menuButton = document.getElementById("menuButton");
   const navLinks = document.getElementById("navLinks");
   let activeFilter = "all";
-  let language = "ne";
+  let language = "bj";
 
   const persistLanguage = (value) => {
-    try { localStorage.setItem("ska-language", value); } catch (_) { /* storage optional */ }
+    try { localStorage.setItem("ska-language-v2", value); } catch (_) { /* storage optional */ }
   };
   const loadLanguage = () => {
-    try { return localStorage.getItem("ska-language") === "en" ? "en" : "ne"; }
-    catch (_) { return "ne"; }
+    try {
+      const saved = localStorage.getItem("ska-language-v2");
+      return ["bj", "ne", "en"].includes(saved) ? saved : "bj";
+    } catch (_) { return "bj"; }
   };
 
   const createIcon = (id) => {
@@ -138,13 +156,13 @@
   };
 
   const setLanguage = (lang) => {
-    language = lang === "en" ? "en" : "ne";
-    document.documentElement.lang = language;
+    language = ["bj", "ne", "en"].includes(lang) ? lang : "bj";
+    document.documentElement.lang = language === "bj" ? "vjk" : language;
     for (const element of translatable) {
-      element.textContent = language === "en" ? element.dataset.en : element.dataset.ne;
+      element.textContent = language === "en" ? element.dataset.en : language === "ne" ? element.dataset.ne : element.dataset.bj;
     }
     for (const input of placeholderInputs) {
-      input.placeholder = language === "en" ? input.dataset.placeholderEn : input.dataset.placeholderNe;
+      input.placeholder = language === "en" ? input.dataset.placeholderEn : language === "ne" ? input.dataset.placeholderNe : input.dataset.placeholderBj;
     }
     for (const button of langButtons) {
       const active = button.dataset.lang === language;
