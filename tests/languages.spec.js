@@ -1,6 +1,8 @@
 import { test, expect } from '@playwright/test';
+import { resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
 
-const siteURL = new URL('../index.html', import.meta.url).href;
+const siteURL = pathToFileURL(resolve(process.cwd(), 'index.html')).href;
 
 test('Bajika is the initial language and Nepali + English switches work', async ({ page }) => {
   await page.goto(siteURL);
