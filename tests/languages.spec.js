@@ -108,7 +108,7 @@ test('FAQ expands and share action uses device sharing when available', async ({
   await page.locator('#faq details').first().locator('summary').click();
   await expect(page.locator('#faq details').first()).toHaveAttribute('open', '');
   await page.locator('#shareSite').click();
-  await expect.poll(() => page.evaluate(() => window.sharedSiteURL)).toContain('/Sahodawa-karmachari-Association/');
+  await expect.poll(() => page.evaluate(() => window.sharedSiteURL)).toBe('http://127.0.0.1:4173/');
 });
 
 test.describe('360px touchscreen layout', () => {
