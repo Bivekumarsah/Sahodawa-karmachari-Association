@@ -94,10 +94,11 @@
   const persistLanguage = (value) => {
     try { localStorage.setItem("ska-language-v2", value); } catch (_) { /* storage optional */ }
   };
+  const SUPPORTED_LANGUAGES = ["bj", "ne", "en"];
   const loadLanguage = () => {
     try {
       const saved = localStorage.getItem("ska-language-v2");
-      return ["bj", "ne", "en"].includes(saved) ? saved : "bj";
+      return SUPPORTED_LANGUAGES.includes(saved) ? saved : "bj";
     } catch (_) { return "bj"; }
   };
 
@@ -123,7 +124,7 @@
     noticeList.replaceChildren();
     const filtered = notices.filter((notice) => {
       if (activeFilter !== "all" && notice.category !== activeFilter) return false;
-      const searchable = [notice.title.ne, notice.title.en, notice.description.ne, notice.description.en, labels.ne[notice.category], labels.en[notice.category]].join(" ").toLocaleLowerCase();
+      const searchable = [notice.title.bj, notice.title.ne, notice.title.en, notice.description.bj, notice.description.ne, notice.description.en, labels.bj[notice.category], labels.ne[notice.category], labels.en[notice.category]].join(" ").toLocaleLowerCase();
       return searchable.includes(query);
     });
 
@@ -156,13 +157,18 @@
   };
 
   const setLanguage = (lang) => {
-    language = ["bj", "ne", "en"].includes(lang) ? lang : "bj";
+    // Resolve content from stable data attributes, never from the currently
+    // displayed text. This makes switching bj -> ne -> en -> bj reversible.
+    language = SUPPORTED_LANGUAGES.includes(lang) ? lang : "bj";
     document.documentElement.lang = language === "bj" ? "vjk" : language;
     for (const element of translatable) {
-      element.textContent = language === "en" ? element.dataset.en : language === "ne" ? element.dataset.ne : element.dataset.bj;
+      const translated = element.getAttribute("data-" + language);
+      if (translated !== null) element.textContent = translated;
     }
+    const placeholderAttr = "data-placeholder-" + language;
     for (const input of placeholderInputs) {
-      input.placeholder = language === "en" ? input.dataset.placeholderEn : language === "ne" ? input.dataset.placeholderNe : input.dataset.placeholderBj;
+      const translated = input.getAttribute(placeholderAttr);
+      if (translated !== null) input.placeholder = translated;
     }
     for (const button of langButtons) {
       const active = button.dataset.lang === language;
@@ -170,6 +176,8 @@
       button.setAttribute("aria-pressed", String(active));
     }
     menuButton.setAttribute("aria-label", labels[language][menuButton.getAttribute("aria-expanded") === "true" ? "menuClose" : "menuOpen"]);
+    const status = document.getElementById("languageStatus");
+    if (status) status.textContent = language === "bj" ? "बज्जिका भाषा चुनल गेल" : language === "ne" ? "नेपाली भाषा चयन गरियो" : "English selected";
     persistLanguage(language);
     renderNotices();
   };
@@ -208,7 +216,10 @@
     });
   });
   searchInput.addEventListener("input", renderNotices);
-  langButtons.forEach((button) => button.addEventListener("click", () => setLanguage(button.dataset.lang)));
+  langButtons.forEach((button) => button.addEventListener("click", (event) => {
+    event.preventDefault();
+    setLanguage(button.dataset.lang);
+  }));
 
   const membershipForm = document.getElementById("membershipForm");
   membershipForm.addEventListener("submit", (event) => {
