@@ -19,6 +19,6 @@ test('editorial visual review captures', async ({ page }) => {
   emitScreenshot('membership', await page.locator('#membership').screenshot({type:'jpeg',quality:53}));
   await page.setViewportSize({width: 390,height: 844});
   await page.reload();
-  await page.evaluate(() => document.fonts.ready);
+  await page.evaluate(async () => { await document.fonts.ready; window.scrollTo({top:0,behavior:'instant'}); });
   emitScreenshot('mobile', await page.screenshot({type:'jpeg',quality:55}));
 });
